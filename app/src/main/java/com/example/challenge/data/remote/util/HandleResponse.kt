@@ -1,4 +1,4 @@
-package com.example.challenge.data.common
+package com.example.challenge.data.remote.util
 
 import com.example.challenge.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
