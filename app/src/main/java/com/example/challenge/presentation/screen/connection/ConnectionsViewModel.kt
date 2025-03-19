@@ -37,24 +37,19 @@ class ConnectionsViewModel @Inject constructor(
     }
 
     private fun fetchConnections() {
+        _connectionState.update { it.copy(isLoading = true, connections = listOf()) }
         viewModelScope.launch {
-            getConnectionsUseCase().collect {
-                when (it) {
-                    is Resource.Loading -> _connectionState.update { currentState ->
-                        currentState.copy(
-                            isLoading = true
-                        )
-                    }
-
+            getConnectionsUseCase().collect { resource ->
+                when (resource) {
                     is Resource.Success -> {
                         _connectionState.update { currentState ->
                             currentState.copy(
                                 isLoading = false,
-                                connections = it.data.map { it.toPresenter() })
+                                connections = resource.data.map { it.toPresenter() })
                         }
                     }
 
-                    is Resource.Error -> _uiEvent.send(ConnectionUiEvent.ShowSnackBar(it.message))
+                    is Resource.Error -> _uiEvent.send(ConnectionUiEvent.ShowSnackBar(resource.message))
                 }
             }
         }

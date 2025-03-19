@@ -1,7 +1,6 @@
 package com.example.challenge.di
 
 import com.example.challenge.BuildConfig
-import com.example.challenge.data.common.HandleResponse
 import com.example.challenge.data.remote.service.connection.ConnectionsService
 import com.example.challenge.data.remote.service.log_in.LogInService
 import com.squareup.moshi.Moshi
@@ -10,10 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import okhttp3.Interceptor
+import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -27,13 +23,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        authTokenFlow: Flow<String?>, loggingInterceptor: HttpLoggingInterceptor
+        authTokenFlow: StateFlow<String?>,
+        loggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient {
-        val clientBuilder = OkHttpClient.Builder()
-
-        clientBuilder
+        return OkHttpClient.Builder()
             .addInterceptor { chain ->
-                val authToken = runBlocking { authTokenFlow.first() }
+                val authToken = authTokenFlow.value
                 val newRequest = if (!authToken.isNullOrBlank()) {
                     chain.request().newBuilder()
                         .addHeader("Authorization", "Bearer $authToken")
@@ -43,8 +38,8 @@ object AppModule {
                 }
                 chain.proceed(newRequest)
             }
-        clientBuilder.addInterceptor(loggingInterceptor)
-        return clientBuilder.build()
+            .addInterceptor(loggingInterceptor)
+            .build()
     }
 
     @Provides
@@ -67,13 +62,6 @@ object AppModule {
                 )
             )
             .build()
-    }
-
-
-    @Singleton
-    @Provides
-    fun provideHandleResponse(): HandleResponse {
-        return HandleResponse()
     }
 
     @Singleton

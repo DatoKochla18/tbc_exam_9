@@ -1,11 +1,11 @@
 package com.example.challenge.presentation.screen.log_in
 
-import android.view.View
+import android.util.Log
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.challenge.databinding.FragmentLogInBinding
 import com.example.challenge.presentation.base.BaseFragment
-import com.example.challenge.presentation.event.log_in.LogInEvent
 import com.example.challenge.presentation.extension.collectLastFlow
 import com.example.challenge.presentation.extension.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,8 +50,7 @@ class LogInFragment : BaseFragment<FragmentLogInBinding>(FragmentLogInBinding::i
     }
 
     private fun handleLogInState(logInState: LogInState) {
-        binding.loaderInclude.loaderContainer.visibility =
-            if (logInState.isLoading) View.VISIBLE else View.GONE
+        binding.loaderInclude.loaderContainer.isVisible = logInState.isLoading
 
         logInState.error?.let {
             binding.root.showSnackBar(message = it)

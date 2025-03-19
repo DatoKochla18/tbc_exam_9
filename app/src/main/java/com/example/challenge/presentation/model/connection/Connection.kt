@@ -6,5 +6,4 @@ data class Connection(
     val email: String,
     val id: Int,
     val fullName: String,
-    val isSelected: Boolean = false,
 )

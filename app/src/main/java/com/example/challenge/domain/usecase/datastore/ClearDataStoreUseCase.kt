@@ -1,10 +1,10 @@
 package com.example.challenge.domain.usecase.datastore
 
-import com.example.challenge.domain.repository.datastore.DataStoreRepository
+import com.example.challenge.domain.manager.UserSessionManager
 import javax.inject.Inject
 
-class ClearDataStoreUseCase @Inject constructor(private val dataStoreRepository: DataStoreRepository) {
+class ClearDataStoreUseCase @Inject constructor(private val userSessionManager: UserSessionManager) {
     suspend operator fun invoke() {
-        dataStoreRepository.clear()
+        userSessionManager.clear()
     }
 }

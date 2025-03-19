@@ -4,8 +4,9 @@ import com.example.challenge.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
+import javax.inject.Inject
 
-class HandleResponse() {
+class HandleResponse @Inject constructor() {
     fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Flow<Resource<T>> = flow {
         try {
             val response = apiCall()

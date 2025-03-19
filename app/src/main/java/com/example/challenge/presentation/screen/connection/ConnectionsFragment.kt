@@ -1,7 +1,7 @@
 package com.example.challenge.presentation.screen.connection
 
 import android.util.Log
-import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,8 +53,8 @@ class ConnectionsFragment :
     }
 
     private fun handleConnectionState(state: ConnectionState) {
-        binding.loaderInclude.loaderContainer.visibility =
-            if (state.isLoading) View.VISIBLE else View.GONE
+        binding.loaderInclude.loaderContainer.isVisible = state.isLoading
+        binding.btnLogOut.isVisible = !state.isLoading
 
         state.connections?.let {
             connectionsRecyclerAdapter.submitList(it)

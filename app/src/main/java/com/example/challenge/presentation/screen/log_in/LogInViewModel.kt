@@ -2,12 +2,10 @@ package com.example.challenge.presentation.screen.log_in
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.challenge.domain.usecase.datastore.SaveTokenUseCase
 import com.example.challenge.domain.usecase.log_in.LogInUseCase
 import com.example.challenge.domain.usecase.validator.EmailValidatorUseCase
 import com.example.challenge.domain.usecase.validator.PasswordValidatorUseCase
 import com.example.challenge.domain.util.Resource
-import com.example.challenge.presentation.event.log_in.LogInEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +19,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LogInViewModel @Inject constructor(
     private val logInUseCase: LogInUseCase,
-    private val saveTokenUseCase: SaveTokenUseCase,
     private val emailValidator: EmailValidatorUseCase,
     private val passwordValidator: PasswordValidatorUseCase,
 ) : ViewModel() {
@@ -39,17 +36,11 @@ class LogInViewModel @Inject constructor(
     }
 
     private fun logIn(email: String, password: String) {
+        _logInState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             logInUseCase(email = email, password = password).collect {
                 when (it) {
-                    is Resource.Loading -> _logInState.update { currentState ->
-                        currentState.copy(
-                            isLoading = true
-                        )
-                    }
-
                     is Resource.Success -> {
-                        saveTokenUseCase(it.data.accessToken)
                         _uiEvent.send(LogInUiEvent.NavigateToConnections)
                     }
 

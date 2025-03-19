@@ -13,8 +13,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Singleton
 
 @Module
@@ -23,22 +28,24 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideDataSore(@ApplicationContext context: Context): DataStore<Preferences> {
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = {
-                    emptyPreferences()
-                }
+                produceNewData = { emptyPreferences() }
             ),
-            produceFile = { context.preferencesDataStoreFile("settings") })
+            produceFile = { context.preferencesDataStoreFile("settings") }
+        )
     }
 
     @Provides
     @Singleton
-    fun provideAuthToken(dataStore: DataStore<Preferences>): Flow<String?> {
+    fun provideAuthTokenStateFlow(dataStore: DataStore<Preferences>): StateFlow<String?> {
         return dataStore.data
-            .map { preferences ->
-                preferences[PreferenceKeys.TOKEN]
-            }
+            .map { preferences -> preferences[PreferenceKeys.TOKEN] }
+            .stateIn(
+                scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+                started = SharingStarted.Eagerly,
+                initialValue = null
+            )
     }
 }
