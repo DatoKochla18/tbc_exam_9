@@ -32,4 +32,10 @@ class SplashViewModel @Inject constructor(private val getTokenUseCase: GetTokenU
             }
         }
     }
+
+    sealed interface SplashUiEvent {
+        object NavigateToLogIn : SplashUiEvent
+        object NavigateToConnections : SplashUiEvent
+
+    }
 }

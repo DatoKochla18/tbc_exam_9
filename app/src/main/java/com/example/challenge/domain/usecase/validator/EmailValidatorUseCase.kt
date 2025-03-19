@@ -1,6 +1,8 @@
 package com.example.challenge.domain.usecase.validator
 
-class EmailValidatorUseCase {
+import javax.inject.Inject
+
+class EmailValidatorUseCase @Inject constructor() {
 
     private val emailRegex = Regex(
         "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +

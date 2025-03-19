@@ -5,7 +5,6 @@
     <string name="log_in">Log In</string>
     <string name="enter_email">Enter Email</string>
     <string name="password">Password</string>
-    <android name="test">Vai sacodao android developero</android>
     <string name="fields_are_not_valid">Fields are not valid!</string>
     <string name="log_out">Log Out</string>
 </resources>

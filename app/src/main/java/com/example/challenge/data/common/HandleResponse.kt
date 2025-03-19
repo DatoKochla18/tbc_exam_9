@@ -1,27 +1,24 @@
 package com.example.challenge.data.common
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import com.example.challenge.domain.user_data_key.PreferenceKeys
-import kotlinx.coroutines.flow.first
+import com.example.challenge.domain.util.Resource
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
 class HandleResponse() {
-    fun <T : Any> safeApiCall(call: suspend () -> Response<T>) = flow {
-        emit(Resource.Loading(loading = true))
+    fun <T> safeApiCall(apiCall: suspend () -> Response<T>): Flow<Resource<T>> = flow {
         try {
-            val response = call()
-            val body = response.body()
-            if (response.isSuccessful && body != null) {
-                emit(Resource.Success(data = body))
+            val response = apiCall()
+
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    emit(Resource.Success(it))
+                } ?: emit(Resource.Error(""))
             } else {
-                emit(Resource.Error(errorMessage = response.errorBody()?.string() ?: ""))
+                emit(Resource.Error(response.message()))
             }
-        } catch (e: Throwable) {
-            emit(Resource.Error(errorMessage = e.message ?: ""))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.localizedMessage ?: ""))
         }
-        emit(Resource.Loading(loading = false))
     }
 }

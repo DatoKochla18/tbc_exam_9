@@ -1,8 +1,9 @@
 package com.example.challenge.di
 
+import com.example.challenge.BuildConfig
 import com.example.challenge.data.common.HandleResponse
-import com.example.challenge.data.service.connection.ConnectionsService
-import com.example.challenge.data.service.log_in.LogInService
+import com.example.challenge.data.remote.service.connection.ConnectionsService
+import com.example.challenge.data.remote.service.log_in.LogInService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
