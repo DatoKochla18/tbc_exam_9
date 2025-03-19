@@ -20,7 +20,7 @@ class ConnectionsFragment :
         ConnectionsRecyclerAdapter()
     }
 
-    override fun bind() {
+    private fun bind() {
         binding.apply {
             recyclerConnections.layoutManager = LinearLayoutManager(requireContext())
             recyclerConnections.setHasFixedSize(true)
@@ -29,13 +29,15 @@ class ConnectionsFragment :
         viewModel.onEvent(ConnectionEvent.FetchConnections)
     }
 
-    override fun bindViewActionListeners() {
+    private fun bindViewActionListeners() {
         binding.btnLogOut.setOnClickListener {
             viewModel.onEvent(ConnectionEvent.LogOut)
         }
     }
 
     override fun bindObserves() {
+        bind()
+        bindViewActionListeners()
         collectLastFlow(viewModel.connectionState) {
             viewModel.connectionState.collect {
                 Log.d("state", it.toString())
@@ -46,8 +48,8 @@ class ConnectionsFragment :
 
         collectLastFlow(viewModel.uiEvent) { event ->
             when (event) {
-                ConnectionsViewModel.ConnectionUiEvent.NavigateToLogIn -> handleNavigationEvents()
-                is ConnectionsViewModel.ConnectionUiEvent.ShowSnackBar -> toast(event.message)
+                ConnectionSideEffect.NavigateToLogIn -> handleNavigationEvents()
+                is ConnectionSideEffect.ShowSnackBar -> toast(event.message)
             }
         }
     }

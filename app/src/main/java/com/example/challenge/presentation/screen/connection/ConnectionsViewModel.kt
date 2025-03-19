@@ -26,7 +26,7 @@ class ConnectionsViewModel @Inject constructor(
     private val _connectionState = MutableStateFlow(ConnectionState())
     val connectionState: SharedFlow<ConnectionState> = _connectionState.asStateFlow()
 
-    private val _uiEvent = Channel<ConnectionUiEvent>()
+    private val _uiEvent = Channel<ConnectionSideEffect>()
     val uiEvent get() = _uiEvent.receiveAsFlow()
 
     fun onEvent(event: ConnectionEvent) {
@@ -49,7 +49,7 @@ class ConnectionsViewModel @Inject constructor(
                         }
                     }
 
-                    is Resource.Error -> _uiEvent.send(ConnectionUiEvent.ShowSnackBar(resource.message))
+                    is Resource.Error -> _uiEvent.send(ConnectionSideEffect.ShowSnackBar(resource.message))
                 }
             }
         }
@@ -58,12 +58,9 @@ class ConnectionsViewModel @Inject constructor(
     private fun logOut() {
         viewModelScope.launch {
             clearDataStoreUseCase()
-            _uiEvent.send(ConnectionUiEvent.NavigateToLogIn)
+            _uiEvent.send(ConnectionSideEffect.NavigateToLogIn)
         }
     }
 
-    sealed interface ConnectionUiEvent {
-        object NavigateToLogIn : ConnectionUiEvent
-        data class ShowSnackBar(val message: String) : ConnectionUiEvent
-    }
+
 }

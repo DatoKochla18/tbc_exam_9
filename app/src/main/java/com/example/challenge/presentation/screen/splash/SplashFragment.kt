@@ -15,13 +15,8 @@ import kotlinx.coroutines.launch
 class SplashFragment : BaseFragment<FragmentSplashBinding>(FragmentSplashBinding::inflate) {
     private val viewModel: SplashViewModel by viewModels()
 
-    override fun bind() {
 
-    }
 
-    override fun bindViewActionListeners() {
-
-    }
 
     override fun bindObserves() {
         collectLastFlow(viewModel.uiEvent) { event ->

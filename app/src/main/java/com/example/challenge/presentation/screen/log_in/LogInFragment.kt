@@ -1,6 +1,5 @@
 package com.example.challenge.presentation.screen.log_in
 
-import android.util.Log
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,17 +14,15 @@ class LogInFragment : BaseFragment<FragmentLogInBinding>(FragmentLogInBinding::i
 
     private val viewModel: LogInViewModel by viewModels()
 
-    override fun bind() {
 
-    }
-
-    override fun bindViewActionListeners() {
+    private fun bindViewActionListeners() {
         binding.btnLogIn.setOnClickListener {
             logIn()
         }
     }
 
     override fun bindObserves() {
+        bindViewActionListeners()
         collectLastFlow(viewModel.logInState) {
             handleLogInState(logInState = it)
         }
@@ -33,8 +30,8 @@ class LogInFragment : BaseFragment<FragmentLogInBinding>(FragmentLogInBinding::i
 
         collectLastFlow(viewModel.uiEvent) { event ->
             when (event) {
-                LogInViewModel.LogInUiEvent.NavigateToConnections -> handleNavigationEvents()
-                is LogInViewModel.LogInUiEvent.ShowSnackBar -> binding.root.showSnackBar(event.message)
+                LogInSideEffect.NavigateToConnections -> handleNavigationEvents()
+                is LogInSideEffect.ShowSnackBar -> binding.root.showSnackBar(event.message)
             }
         }
     }

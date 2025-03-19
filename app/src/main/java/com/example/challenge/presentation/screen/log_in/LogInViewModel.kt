@@ -25,7 +25,7 @@ class LogInViewModel @Inject constructor(
     private val _logInState = MutableStateFlow(LogInState())
     val logInState: SharedFlow<LogInState> = _logInState.asStateFlow()
 
-    private val _uiEvent = Channel<LogInUiEvent>()
+    private val _uiEvent = Channel<LogInSideEffect>()
     val uiEvent get() = _uiEvent.receiveAsFlow()
 
     fun onEvent(event: LogInEvent) {
@@ -41,10 +41,10 @@ class LogInViewModel @Inject constructor(
             logInUseCase(email = email, password = password).collect {
                 when (it) {
                     is Resource.Success -> {
-                        _uiEvent.send(LogInUiEvent.NavigateToConnections)
+                        _uiEvent.send(LogInSideEffect.NavigateToConnections)
                     }
 
-                    is Resource.Error -> _uiEvent.send(LogInUiEvent.ShowSnackBar(it.message))
+                    is Resource.Error -> _uiEvent.send(LogInSideEffect.ShowSnackBar(it.message))
                 }
             }
         }
@@ -67,10 +67,7 @@ class LogInViewModel @Inject constructor(
     }
 
 
-    sealed interface LogInUiEvent {
-        object NavigateToConnections : LogInUiEvent
-        data class ShowSnackBar(val message: String) : LogInUiEvent
-    }
+
 }
 
 
